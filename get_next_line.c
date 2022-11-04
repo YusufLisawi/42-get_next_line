@@ -22,7 +22,10 @@ char	*store_next(char *store)
 	while (store[i] && store[i] != '\n')
 		i++;
 	if (!store[i])
+	{
+		free(store);
 		return (NULL);
+	}
 	new_store = (char *)malloc(sizeof(char) * (ft_strlen(store) - i));
 	if (!new_store)
 		return (NULL);
@@ -31,6 +34,7 @@ char	*store_next(char *store)
 	while (store[i])
 		new_store[j++] = store[i++];
 	new_store[j] = '\0';
+	free(store);
 	return (new_store);
 }
 
@@ -83,16 +87,13 @@ char	*get_next_line(int fd)
 {
 	char		*line;
 	static char	*store;
-	char		*tmp;
 
 	if (fd == -1 || BUFFER_SIZE <= 0)
 		return (0);
 	store = read_and_store(fd, store);
 	if (!store)
 		return (NULL);
-	tmp = store;
-	line = ft_getline(tmp);
-	store = store_next(tmp);
-	free(tmp);
+	line = ft_getline(store);
+	store = store_next(store);
 	return (line);
 }
